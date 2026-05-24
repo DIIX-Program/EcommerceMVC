@@ -1,0 +1,155 @@
+@model IEnumerable<EcommerceMVC.Models.HoaDon>
+@{
+    ViewData["Title"] = "Quản lý Đơn Hàng";
+    Layout = "_AdminLayout";
+    int? currentStatus = ViewBag.CurrentStatus;
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-baseline flex-wrap">
+    <h2 style="border: none; padding: 0; margin: 0;">Quản lý Đơn Đặt Hàng</h2>
+    <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-body); text-transform: uppercase;">
+        Tổng số: @ViewBag.TotalItems đơn hàng
+    </span>
+</div>
+
+<!-- Horizontal Editorial Status Filters -->
+<div class="mb-4 py-3" style="border-top: 1px solid var(--color-primary); border-bottom: 1px solid var(--color-primary); font-family: var(--font-sans); font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">
+    <span style="color: var(--color-body); margin-right: 16px;">Lọc Trạng Thái:</span>
+    <a href="/diix/HoaDon?searchKey=@ViewBag.SearchKey" style="color: @(currentStatus == null ? "var(--color-primary)" : "var(--color-body)"); text-decoration: @(currentStatus == null ? "underline" : "none"); margin-right: 16px;">TẤT CẢ</a>
+    
+    @foreach (var ts in (IEnumerable<EcommerceMVC.Models.TrangThai>)ViewBag.TrangThais)
+    {
+        <a href="/diix/HoaDon?status=@ts.MaTrangThai&searchKey=@ViewBag.SearchKey" style="color: @(currentStatus == ts.MaTrangThai ? "var(--color-primary)" : "var(--color-body)"); text-decoration: @(currentStatus == ts.MaTrangThai ? "underline" : "none"); margin-right: 16px;">
+            @ts.TenTrangThai.ToUpper()
+        </a>
+    }
+</div>
+
+<!-- Search Form -->
+<div class="admin-card mb-4" style="padding: 20px;">
+    <form method="get" action="/diix/HoaDon" class="row align-items-center">
+        <input type="hidden" name="status" value="@currentStatus" />
+        <div class="col-md-8 mb-2 mb-md-0">
+            <input type="text" name="searchKey" value="@ViewBag.SearchKey" class="admin-input" placeholder="Tìm đơn hàng theo tên người nhận, mã ĐH, địa chỉ, tài khoản..." />
+        </div>
+        <div class="col-md-4 d-flex">
+            <button type="submit" class="admin-btn admin-btn-primary w-100 mr-2" style="height: 42px;">TÌM KIẾM</button>
+            @if (!string.IsNullOrEmpty(ViewBag.SearchKey))
+            {
+                <a href="/diix/HoaDon?status=@currentStatus" class="admin-btn admin-btn-outline" style="height: 42px; line-height: 40px; padding: 0 16px;">RESET</a>
+            }
+        </div>
+    </form>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th style="width: 100px;">Mã ĐH</th>
+                <th>Ngày đặt</th>
+                <th>Người nhận</th>
+                <th>Địa chỉ giao hàng</th>
+                <th>Thanh toán</th>
+                <th>Vận chuyển</th>
+                <th style="text-align: center; width: 150px;">Trạng thái</th>
+                <th style="text-align: center; width: 140px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td class="font-weight-bold" style="color: var(--color-primary); font-family: monospace; font-size: 14px;">#@item.MaHd</td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--color-ink);">@item.NgayDat.ToString("dd/MM/yyyy HH:mm")</div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--color-ink);">@item.HoTen</div>
+                        <span style="font-size: 11px; color: var(--color-body);">Khách: @(item.MaKhNavigation?.HoTen ?? item.MaKh)</span>
+                    </td>
+                    <td style="font-size: 13px; color: var(--color-ink-soft);">
+                        @item.DiaChi
+                    </td>
+                    <td>
+                        <span class="admin-badge" style="background-color: var(--color-canvas-soft); border-color: var(--color-hairline); font-size: 11px;">
+                            @item.CachThanhToan.ToUpper()
+                        </span>
+                    </td>
+                    <td style="font-family: monospace; font-size: 12px; color: var(--color-body);">
+                        @item.CachVanChuyen
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="admin-badge badge-status-@item.MaTrangThai" style="font-size: 11px;">
+                            @(item.MaTrangThaiNavigation?.TenTrangThai ?? $"Trạng thái {item.MaTrangThai}")
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <a href="/diix/ChiTietHoaDon?id=@item.MaHd" class="admin-btn admin-btn-primary admin-btn-sm w-100">Chi Tiết</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 48px; color: var(--color-body); font-style: italic;">
+                        Không tìm thấy đơn hàng nào khớp với yêu cầu.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination Controls -->
+@if (ViewBag.TotalPages > 1)
+{
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int maxPagesToShow = 5;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    <ul class="admin-pagination" style="flex-wrap: wrap;">
+        <li class="admin-pagination-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="admin-pagination-link" href="/diix/HoaDon?status=@currentStatus&searchKey=@ViewBag.SearchKey&page=@(currentPage - 1)">&larr; Trước</a>
+        </li>
+        
+        @if (startPage > 1)
+        {
+            <li class="admin-pagination-item">
+                <a class="admin-pagination-link" href="/diix/HoaDon?status=@currentStatus&searchKey=@ViewBag.SearchKey&page=1">1</a>
+            </li>
+            @if (startPage > 2)
+            {
+                <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+            }
+        }
+        
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <li class="admin-pagination-item @(currentPage == i ? "active" : "")">
+                <a class="admin-pagination-link" href="/diix/HoaDon?status=@currentStatus&searchKey=@ViewBag.SearchKey&page=@i">@i</a>
+            </li>
+        }
+        
+        @if (endPage < totalPages)
+        {
+            @if (endPage < totalPages - 1)
+            {
+                <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+            }
+            <li class="admin-pagination-item">
+                <a class="admin-pagination-link" href="/diix/HoaDon?status=@currentStatus&searchKey=@ViewBag.SearchKey&page=@totalPages">@totalPages</a>
+            </li>
+        }
+        
+        <li class="admin-pagination-item @(currentPage == totalPages ? "disabled" : "")">
+            <a class="admin-pagination-link" href="/diix/HoaDon?status=@currentStatus&searchKey=@ViewBag.SearchKey&page=@(currentPage + 1)">Sau &rarr;</a>
+        </li>
+    </ul>
+}

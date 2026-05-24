@@ -1,0 +1,52 @@
+@model IEnumerable<EcommerceMVC.ViewModels.HangHoaVM>
+@{
+	ViewData["Title"] = "Danh sách hàng hóa";
+	Layout = "_DanhSachHangHoa";
+}
+
+<div class="row product-list">
+	<div class="col-md-12">
+		<h2>Có <strong>@Model.Count()</strong> sản phẩm.</h2>
+	</div>
+	@foreach (var item in Model)
+	{
+		<div class="col-md-4 col-sm-6 col-xs-12">
+			<div class="product-item">
+				<div class="pi-img-wrapper">
+					@{
+						var hinhPath = item.Hinh;
+						if (!string.IsNullOrEmpty(hinhPath) && !hinhPath.Contains("/"))
+						{
+							hinhPath = "/Hinh/Hinh/HangHoa/" + hinhPath;
+						}
+					}
+					<img src="@Url.Content("~" + hinhPath)" style="width:300px;height:300px; !important" class="img-responsive" alt="@item.TenHh" onerror="this.src='/Hinh/Hinh/HangHoa/To.gif'">
+					<div>
+						<a href="@Url.Content("~" + hinhPath)" class="btn btn-default fancybox-button">Phóng to</a>
+						<a asp-action="Detail" asp-route-id="@item.MaHh" class="btn btn-default">Xem chi tiết</a>
+					</div>
+				</div>
+				<h3><a asp-action="Detail" asp-route-id="@item.MaHh">@item.TenHh</a></h3>
+				<div class="pi-price">$@item.DonGia</div>
+				<a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.MaHh" class="btn btn-default add2cart">Thêm vào giỏ</a>
+				<a asp-controller="YeuThich" asp-action="Add" asp-route-id="@item.MaHh" class="btn btn-default"><i class="fa fa-heart"></i></a>
+			</div>
+		</div>
+	}
+</div>
+
+<!-- BEGIN PAGINATION -->
+<div class="row">
+	<div class="col-md-4 col-sm-4 items-info">Items @(((int)ViewBag.CurrentPage - 1) * 9 + 1) to @(Math.Min((int)ViewBag.CurrentPage * 9, (int)Model.Count())) of @Model.Count() items</div>
+	<div class="col-md-8 col-sm-8">
+		<ul class="pagination pull-right">
+			@for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+			{
+				<li class="@(i == (int)ViewBag.CurrentPage ? "active" : "")">
+					<a asp-action="@ViewContext.RouteData.Values["action"]" asp-route-loai="@ViewBag.MaLoai" asp-route-query="@ViewBag.Query" asp-route-page="@i">@i</a>
+				</li>
+			}
+		</ul>
+	</div>
+</div>
+<!-- END PAGINATION -->

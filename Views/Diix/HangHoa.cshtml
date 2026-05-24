@@ -1,0 +1,183 @@
+@model IEnumerable<EcommerceMVC.Models.HangHoa>
+@{
+    ViewData["Title"] = "Quản lý Hàng Hóa";
+    Layout = "_AdminLayout";
+}
+
+<!-- Floating Toast Container -->
+<div class="admin-toast-container">
+    <div id="admin-toast" class="admin-toast"></div>
+</div>
+
+<div class="mb-4 d-flex justify-content-between align-items-baseline flex-wrap">
+    <h2 style="border: none; padding: 0; margin: 0;">Quản lý Hàng Hóa</h2>
+    <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-body); text-transform: uppercase;">
+        Hiển thị @Model.Count() / @ViewBag.TotalItems sản phẩm
+    </span>
+</div>
+
+<!-- Search Form -->
+<div class="admin-card mb-4" style="padding: 20px;">
+    <form method="get" action="/diix/HangHoa" class="row align-items-center">
+        <div class="col-md-8 mb-2 mb-md-0">
+            <input type="text" name="searchKey" value="@ViewBag.SearchKey" class="admin-input" placeholder="Tìm sản phẩm theo tên hoặc phân loại..." />
+        </div>
+        <div class="col-md-4 d-flex">
+            <button type="submit" class="admin-btn admin-btn-primary w-100 mr-2" style="height: 42px;">TÌM KIẾM</button>
+            <a href="/diix/CreateHangHoa" class="admin-btn admin-btn-outline mr-2" style="height: 42px; line-height: 40px; padding: 0 16px; white-space: nowrap;">THÊM MỚI</a>
+            @if (!string.IsNullOrEmpty(ViewBag.SearchKey))
+            {
+                <a href="/diix/HangHoa" class="admin-btn admin-btn-outline" style="height: 42px; line-height: 40px; padding: 0 16px;">RESET</a>
+            }
+        </div>
+    </form>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th style="width: 80px;">Mã số</th>
+                <th>Tên sản phẩm</th>
+                <th>Phân loại</th>
+                <th style="text-align: right; width: 120px;">Đơn giá</th>
+                <th style="text-align: center; width: 120px;">Bestseller</th>
+                <th style="width: 180px;">Thứ tự hiển thị</th>
+                <th style="text-align: center; width: 160px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td class="font-weight-bold" style="color: var(--color-primary);">#@item.MaHh</td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--color-ink);">@item.TenHh</div>
+                        @if (!string.IsNullOrEmpty(item.Hinh))
+                        {
+                            <span style="font-size: 11px; color: var(--color-body);">File: @item.Hinh</span>
+                        }
+                    </td>
+                    <td>
+                        <span class="admin-badge" style="background-color: var(--color-canvas-soft); border-color: var(--color-hairline); font-size: 11px; font-weight: 600;">
+                            @(item.MaLoaiNavigation?.TenLoai ?? "Chưa phân loại")
+                        </span>
+                    </td>
+                    <td style="text-align: right; font-weight: 700; color: var(--color-ink);">
+                        $@item.DonGia?.ToString("N2")
+                    </td>
+                    <td style="text-align: center;">
+                        <input type="checkbox" onchange="updateBestseller(@item.MaHh, this.checked)" @(item.IsBestseller ? "checked" : "") style="transform: scale(1.3); cursor: pointer;" />
+                    </td>
+                    <td>
+                        <form asp-action="UpdateSortOrder" method="post" class="d-flex align-items-center">
+                            <input type="hidden" name="id" value="@item.MaHh" />
+                            <input type="number" name="sortOrder" value="@item.SortOrder" class="admin-input py-1 px-2" style="width: 70px; height: 32px; text-align: center; border-right: none;" />
+                            <button type="submit" class="admin-btn admin-btn-primary admin-btn-sm" style="height: 32px; padding: 0 12px; line-height: 30px;">Lưu</button>
+                        </form>
+                    </td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <a href="/diix/EditHangHoa?id=@item.MaHh" class="admin-btn admin-btn-outline admin-btn-sm mr-1">Sửa</a>
+                        <form asp-action="DeleteHangHoa" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                            <input type="hidden" name="id" value="@item.MaHh" />
+                            <button type="submit" class="admin-btn admin-btn-danger admin-btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination Controls -->
+@if (ViewBag.TotalPages > 1)
+{
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int maxPagesToShow = 5;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    <ul class="admin-pagination" style="flex-wrap: wrap;">
+        <li class="admin-pagination-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="admin-pagination-link" href="/diix/HangHoa?searchKey=@ViewBag.SearchKey&page=@(currentPage - 1)">&larr; Trước</a>
+        </li>
+        
+        @if (startPage > 1)
+        {
+            <li class="admin-pagination-item">
+                <a class="admin-pagination-link" href="/diix/HangHoa?searchKey=@ViewBag.SearchKey&page=1">1</a>
+            </li>
+            @if (startPage > 2)
+            {
+                <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+            }
+        }
+        
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <li class="admin-pagination-item @(currentPage == i ? "active" : "")">
+                <a class="admin-pagination-link" href="/diix/HangHoa?searchKey=@ViewBag.SearchKey&page=@i">@i</a>
+            </li>
+        }
+        
+        @if (endPage < totalPages)
+        {
+            @if (endPage < totalPages - 1)
+            {
+                <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+            }
+            <li class="admin-pagination-item">
+                <a class="admin-pagination-link" href="/diix/HangHoa?searchKey=@ViewBag.SearchKey&page=@totalPages">@totalPages</a>
+            </li>
+        }
+        
+        <li class="admin-pagination-item @(currentPage == totalPages ? "disabled" : "")">
+            <a class="admin-pagination-link" href="/diix/HangHoa?searchKey=@ViewBag.SearchKey&page=@(currentPage + 1)">Sau &rarr;</a>
+        </li>
+    </ul>
+}
+
+@section Scripts {
+    <script>
+        function updateBestseller(id, status) {
+            $.ajax({
+                url: '/diix/UpdateBestsellerStatus',
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showToast(response.message);
+                    } else {
+                        showToast("Lỗi: " + response.message, true);
+                    }
+                },
+                error: function() {
+                    showToast("Lỗi kết nối máy chủ", true);
+                }
+            });
+        }
+
+        function showToast(message, isError = false) {
+            var toast = $('#admin-toast');
+            toast.text(message);
+            if (isError) {
+                toast.css('background-color', 'var(--color-accent-red)');
+            } else {
+                toast.css('background-color', 'var(--color-primary)');
+            }
+            toast.addClass('show');
+            
+            setTimeout(function() {
+                toast.removeClass('show');
+            }, 3000);
+        }
+    </script>
+}

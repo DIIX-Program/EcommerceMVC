@@ -1,0 +1,144 @@
+<!-- BEGIN PRE-FOOTER -->
+<div class="pre-footer">
+    <div class="container">
+        <div class="row">
+            <!-- BEGIN BOTTOM ABOUT BLOCK -->
+            <div class="col-md-3 col-sm-6 pre-footer-col">
+                <h2>About us</h2>
+                <p>Nhóm GR404 đã triển khai dự án web với tâm huyết nhất. </p>
+                <p>Chúc mọi người có trải nghiệm mua sắm vui vẻ .</p>
+                <p>Dự án dùng cho mục đích học tập và chưa có tính chất thương mại </p>
+
+            </div>
+            <!-- END BOTTOM ABOUT BLOCK -->
+            <!-- BEGIN BOTTOM INFO BLOCK -->
+            <div class="col-md-3 col-sm-6 pre-footer-col">
+                <h2>Information</h2>
+                <ul class="list-unstyled">
+                    <li><i class="fa fa-angle-right"></i> <a asp-controller="HangHoa" asp-action="Index">Trang chủ</a></li>
+                    <li><i class="fa fa-angle-right"></i> <a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                    <li><i class="fa fa-angle-right"></i> <a asp-controller="Cart" asp-action="Checkout">Thanh toán</a></li>
+                    <li><i class="fa fa-angle-right"></i> <a asp-controller="YeuThich" asp-action="Index">Yêu thích</a></li>
+                    <li><i class="fa fa-angle-right"></i> <a asp-controller="KhachHang" asp-action="Index">Tài khoản</a></li>
+                </ul>
+            </div>
+            <!-- END INFO BLOCK -->
+            <!-- BEGIN TWITTER BLOCK -->
+            <div class="col-md-3 col-sm-6 pre-footer-col">
+                <h2 class="margin-bottom-0">Latest Tweets</h2>
+            </div>
+            <!-- END TWITTER BLOCK -->
+            <!-- BEGIN BOTTOM CONTACTS -->
+            <div class="col-md-3 col-sm-6 pre-footer-col">
+                <h2>Our Contacts</h2>
+                <address class="margin-bottom-40">
+                    35, Lorem Lis Street, Park Ave<br>
+                    California, US<br>
+                    Phone: 300 323 3456<br>
+                    Fax: 300 323 1456<br>
+                    Email: <a href="mailto:gr404@gmail.com">gr404@gmail.com</a><br>
+                    Skype: <a href="skype:metronic">metronic</a>
+                </address>
+            </div>
+            <!-- END BOTTOM CONTACTS -->
+        </div>
+        <hr>
+        <div class="row">
+            <!-- BEGIN SOCIAL ICONS -->
+            <div class="col-md-6 col-sm-6">
+                <ul class="social-icons">
+                    <li><a class="rss" data-original-title="rss" href="javascript:;"></a></li>
+                    <li><a class="facebook" data-original-title="facebook" href="https://neetcode.io/"></a></li>
+                    <li><a class="twitter" data-original-title="twitter" href="javascript:;"></a></li>
+                    <li><a class="googleplus" data-original-title="googleplus" href="javascript:;"></a></li>
+                    <li><a class="linkedin" data-original-title="linkedin" href="javascript:;"></a></li>
+                    <li><a class="youtube" data-original-title="youtube" href="javascript:;"></a></li>
+                    <li><a class="vimeo" data-original-title="vimeo" href="javascript:;"></a></li>
+                    <li><a class="skype" data-original-title="skype" href="javascript:;"></a></li>
+                </ul>
+            </div>
+            <!-- END SOCIAL ICONS -->
+            <!-- BEGIN NEWLETTER -->
+            <div class="col-md-6 col-sm-6">
+                <div class="pre-footer-subscribe-box pull-right">
+                    <h2>Newsletter</h2>
+                    <form id="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" id="newsletter-email" placeholder="youremail@mail.com" class="form-control" required>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">Subscribe</button>
+                            </span>
+                        </div>
+                    </form>
+                    <div id="newsletter-message" class="mt-2" style="display:none;"></div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var form = document.getElementById('newsletter-form');
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            var email = document.getElementById('newsletter-email').value;
+                            var messageDiv = document.getElementById('newsletter-message');
+                            
+                            fetch('/KhachHang/SubscribeNewsletter', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: 'email=' + encodeURIComponent(email)
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                messageDiv.innerText = data.message;
+                                messageDiv.style.display = 'block';
+                                messageDiv.className = 'mt-2 ' + (data.success ? 'text-success' : 'text-danger');
+                                if (data.success) {
+                                    document.getElementById('newsletter-email').value = '';
+                                }
+                            })
+                            .catch(error => {
+                                messageDiv.innerText = 'Có lỗi xảy ra, vui lòng thử lại sau.';
+                                messageDiv.style.display = 'block';
+                                messageDiv.className = 'mt-2 text-danger';
+                            });
+                        });
+                    }
+                });
+            </script>
+            <!-- END NEWLETTER -->
+        </div>
+    </div>
+</div>
+<!-- END PRE-FOOTER -->
+<!-- BEGIN FOOTER -->
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <!-- BEGIN COPYRIGHT -->
+            <div class="col-md-4 col-sm-4 padding-top-10">
+                2015 © Keenthemes. ALL Rights Reserved.
+            </div>
+            <!-- END COPYRIGHT -->
+            <!-- BEGIN PAYMENTS -->
+            <div class="col-md-4 col-sm-4">
+                <ul class="list-unstyled list-inline pull-right">
+                    <li><img src="~/theme/assets/corporate/img/payments/western-union.jpg" alt="We accept Western Union" title="We accept Western Union"></li>
+                    <li><img src="~/theme/assets/corporate/img/payments/american-express.jpg" alt="We accept American Express" title="We accept American Express"></li>
+                    <li><img src="~/theme/assets/corporate/img/payments/MasterCard.jpg" alt="We accept MasterCard" title="We accept MasterCard"></li>
+                    <li><img src="~/theme/assets/corporate/img/payments/PayPal.jpg" alt="We accept PayPal" title="We accept PayPal"></li>
+                    <li><img src="~/theme/assets/corporate/img/payments/visa.jpg" alt="We accept Visa" title="We accept Visa"></li>
+                </ul>
+            </div>
+            <!-- END PAYMENTS -->
+            <!-- BEGIN POWERED -->
+            <div class="col-md-4 col-sm-4 text-right">
+                <p class="powered">Powered by: <a href="http://www.keenthemes.com/">KeenThemes.com</a></p>
+            </div>
+            <!-- END POWERED -->
+        </div>
+    </div>
+</div>
+<!-- END FOOTER -->

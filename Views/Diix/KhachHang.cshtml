@@ -1,0 +1,166 @@
+@model IEnumerable<EcommerceMVC.Models.KhachHang>
+@{
+    ViewData["Title"] = "Danh sách Khách Hàng";
+    Layout = "_AdminLayout";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-baseline flex-wrap">
+    <h2 style="border: none; padding: 0; margin: 0;">Quản lý Khách Hàng</h2>
+    <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-body); text-transform: uppercase;">
+        Hiển thị @Model.Count() / @ViewBag.TotalItems tài khoản
+    </span>
+</div>
+
+<div class="row-split">
+    <!-- Sidebar: Add new customer form -->
+    <div class="col-sidebar">
+        <div class="admin-card">
+            <h3 class="admin-card-title">Thêm Khách Hàng</h3>
+            <form asp-action="CreateKhachHang" method="post">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MaKh">Mã khách hàng (Username) <span class="text-danger">*</span></label>
+                    <input type="text" id="MaKh" name="MaKh" class="admin-input" placeholder="Ví dụ: customer01" required />
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-label" for="HoTen">Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" id="HoTen" name="HoTen" class="admin-input" placeholder="Ví dụ: Nguyễn Văn B" required />
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-label" for="Email">Địa chỉ Email <span class="text-danger">*</span></label>
+                    <input type="email" id="Email" name="Email" class="admin-input" placeholder="Ví dụ: customer@gmail.com" required />
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-label" for="DienThoai">Số điện thoại</label>
+                    <input type="text" id="DienThoai" name="DienThoai" class="admin-input" placeholder="Ví dụ: 0987654321" />
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MatKhau">Mật khẩu khởi tạo</label>
+                    <input type="password" id="MatKhau" name="MatKhau" class="admin-input" placeholder="Mặc định: 123456" />
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary w-100">Xác Nhận Đăng Ký</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content: Customer list table -->
+    <div class="col-main">
+        <!-- Search bar -->
+        <div class="admin-card mb-4" style="padding: 16px; border-width: 1px;">
+            <form method="get" action="/diix/KhachHang" class="row align-items-center">
+                <div class="col-md-8 mb-2 mb-md-0">
+                    <input type="text" name="searchKey" value="@ViewBag.SearchKey" class="admin-input" placeholder="Tìm theo tên, email, SĐT..." style="height: 38px; padding: 6px 12px;" />
+                </div>
+                <div class="col-md-4 d-flex">
+                    <button type="submit" class="admin-btn admin-btn-primary w-100 mr-2" style="height: 38px; padding: 0;">TÌM KIẾM</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchKey))
+                    {
+                        <a href="/diix/KhachHang" class="admin-btn admin-btn-outline" style="height: 38px; line-height: 36px; padding: 0 12px;">RESET</a>
+                    }
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-table-wrapper">
+            <table class="admin-table" style="margin-top: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 130px;">Mã tài khoản</th>
+                        <th>Họ và tên</th>
+                        <th>Địa chỉ Email</th>
+                        <th>Số điện thoại</th>
+                        <th style="text-align: center; width: 120px;">Trạng thái</th>
+                        <th style="text-align: center; width: 100px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td class="font-weight-bold" style="color: var(--color-primary); font-family: monospace; font-size: 14px;">@item.MaKh</td>
+                            <td style="font-weight: 600; color: var(--color-ink);">@item.HoTen</td>
+                            <td><a href="mailto:@item.Email" style="color: var(--color-primary); font-weight: 500;">@item.Email</a></td>
+                            <td style="font-family: monospace; font-size: 13px;">@(string.IsNullOrEmpty(item.DienThoai) ? "-" : item.DienThoai)</td>
+                            <td style="text-align: center;">
+                                @if (item.HieuLuc)
+                                {
+                                    <span class="admin-badge admin-badge-active">Đã kích hoạt</span>
+                                }
+                                else
+                                {
+                                    <span class="admin-badge admin-badge-inactive">Chưa kích hoạt</span>
+                                }
+                            </td>
+                            <td style="text-align: center; white-space: nowrap;">
+                                <form asp-action="DeleteKhachHang" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa khách hàng này khỏi hệ thống?');">
+                                    <input type="hidden" name="id" value="@item.MaKh" />
+                                    <button type="submit" class="admin-btn admin-btn-danger admin-btn-sm">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 32px; color: var(--color-body); font-style: italic;">
+                                Không tìm thấy khách hàng nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        @if (ViewBag.TotalPages > 1)
+        {
+            int currentPage = ViewBag.CurrentPage;
+            int totalPages = ViewBag.TotalPages;
+            int maxPagesToShow = 5;
+            int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+            int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+            if (endPage - startPage + 1 < maxPagesToShow)
+            {
+                startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            <ul class="admin-pagination" style="flex-wrap: wrap;">
+                <li class="admin-pagination-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="admin-pagination-link" href="/diix/KhachHang?searchKey=@ViewBag.SearchKey&page=@(currentPage - 1)">&larr; Trước</a>
+                </li>
+                
+                @if (startPage > 1)
+                {
+                    <li class="admin-pagination-item">
+                        <a class="admin-pagination-link" href="/diix/KhachHang?searchKey=@ViewBag.SearchKey&page=1">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+                    }
+                }
+                
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="admin-pagination-item @(currentPage == i ? "active" : "")">
+                        <a class="admin-pagination-link" href="/diix/KhachHang?searchKey=@ViewBag.SearchKey&page=@i">@i</a>
+                    </li>
+                }
+                
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+                    }
+                    <li class="admin-pagination-item">
+                        <a class="admin-pagination-link" href="/diix/KhachHang?searchKey=@ViewBag.SearchKey&page=@totalPages">@totalPages</a>
+                    </li>
+                }
+                
+                <li class="admin-pagination-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="admin-pagination-link" href="/diix/KhachHang?searchKey=@ViewBag.SearchKey&page=@(currentPage + 1)">Sau &rarr;</a>
+                </li>
+            </ul>
+        }
+    </div>
+</div>

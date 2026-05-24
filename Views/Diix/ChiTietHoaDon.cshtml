@@ -1,0 +1,156 @@
+@model IEnumerable<EcommerceMVC.Models.ChiTietHd>
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Hàng";
+    Layout = "_AdminLayout";
+    var order = (EcommerceMVC.Models.HoaDon)ViewBag.Order;
+    double? totalBill = 0;
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-baseline">
+    <h2 style="border: none; padding: 0; margin: 0;">Đơn Hàng #@order.MaHd</h2>
+    <a href="/diix/HoaDon" class="admin-btn admin-btn-outline admin-btn-sm">&larr; Quay lại danh sách</a>
+</div>
+
+<div class="order-summary-grid">
+    <!-- Left Column: Items Purchased -->
+    <div>
+        <div class="order-detail-card" style="border-width: 1px;">
+            <div class="order-detail-header">Sản phẩm trong đơn hàng</div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table" style="margin-top: 0;">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th style="text-align: right; width: 120px;">Đơn giá</th>
+                            <th style="text-align: center; width: 100px;">Số lượng</th>
+                            <th style="text-align: right; width: 140px;">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var lineTotal = (item.DonGia * item.SoLuong);
+                            totalBill += lineTotal;
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 700; color: var(--color-ink);">@item.MaHhNavigation?.TenHh</div>
+                                    <span style="font-size: 11px; color: var(--color-body);">Mã SP: #@item.MaHh</span>
+                                </td>
+                                <td style="text-align: right; font-weight: 500;">
+                                    $@item.DonGia.ToString("N2")
+                                </td>
+                                <td style="text-align: center; font-weight: 600;">
+                                    @item.SoLuong
+                                </td>
+                                <td style="text-align: right; font-weight: 700; color: var(--color-primary);">
+                                    $@lineTotal.ToString("N2")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals Area -->
+            <div class="d-flex justify-content-end mt-4">
+                <div style="width: 250px; font-family: var(--font-sans);">
+                    <div class="d-flex justify-content-between py-2" style="border-bottom: 1px solid var(--color-hairline);">
+                        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--color-body);">Tạm tính:</span>
+                        <span style="font-weight: 600;">$@totalBill?.ToString("N2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2" style="border-bottom: 1px solid var(--color-hairline);">
+                        <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--color-body);">Vận chuyển:</span>
+                        <span style="font-weight: 600; color: var(--color-accent-green);">Miễn phí</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-3">
+                        <span style="font-size: 14px; font-weight: 800; text-transform: uppercase; color: var(--color-ink);">Tổng thanh toán:</span>
+                        <span style="font-size: 18px; font-weight: 800; color: var(--color-primary);">$@totalBill?.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Buyer Info & Status Changer -->
+    <div>
+        <!-- Order Status Updater -->
+        <div class="order-detail-card">
+            <div class="order-detail-header" style="font-size: 16px; border-bottom-width: 1px;">Xử lý đơn hàng</div>
+            <div class="mb-3">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-body); display: block; margin-bottom: 6px;">Trạng thái hiện tại:</span>
+                <span class="admin-badge badge-status-@order.MaTrangThai" style="font-size: 12px; padding: 6px 12px;">
+                    @(order.MaTrangThaiNavigation?.TenTrangThai ?? $"Trạng thái {order.MaTrangThai}")
+                </span>
+            </div>
+            
+            <form asp-action="UpdateTrangThaiHoaDon" method="post" class="mt-4" style="border-top: 1px solid var(--color-hairline); padding-top: 16px;">
+                <input type="hidden" name="id" value="@order.MaHd" />
+                <div class="admin-form-group">
+                    <label class="admin-label" for="maTrangThai">Cập nhật trạng thái mới:</label>
+                    <select id="maTrangThai" name="maTrangThai" class="admin-select" required>
+                        @foreach (var ts in (IEnumerable<EcommerceMVC.Models.TrangThai>)ViewBag.TrangThais)
+                        {
+                            <!option value="@ts.MaTrangThai" @(order.MaTrangThai == ts.MaTrangThai ? "selected" : "")>
+                                @ts.TenTrangThai
+                            </!option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary w-100 mt-2">CẬP NHẬT TRẠNG THÁI</button>
+            </form>
+        </div>
+
+        <!-- Buyer Profile Card -->
+        <div class="order-detail-card">
+            <div class="order-detail-header" style="font-size: 16px; border-bottom-width: 1px;">Thông tin giao nhận</div>
+            <table class="w-100 order-meta-table">
+                <tbody>
+                    <tr>
+                        <td><strong>Người nhận:</strong></td>
+                        <td style="font-weight: 600;">@order.HoTen</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Địa chỉ:</strong></td>
+                        <td>@order.DiaChi</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ngày đặt:</strong></td>
+                        <td>@order.NgayDat.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                    @if (order.NgayGiao != null && order.NgayGiao > DateTime.Parse("01/01/1900"))
+                    {
+                        <tr>
+                            <td><strong>Ngày giao:</strong></td>
+                            <td style="font-weight: 600; color: var(--color-accent-green);">
+                                @order.NgayGiao?.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><strong>Thanh toán:</strong></td>
+                        <td>
+                            <span class="admin-badge" style="font-size: 10px; background-color: var(--color-canvas-soft); border-color: var(--color-hairline);">
+                                @order.CachThanhToan.ToUpper()
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vận chuyển:</strong></td>
+                        <td style="font-family: monospace; font-size: 13px;">@order.CachVanChuyen</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(order.GhiChu))
+                    {
+                        <tr>
+                            <td colspan="2" style="border-top: 1px solid var(--color-hairline); padding-top: 12px; margin-top: 12px;">
+                                <strong>Ghi chú đơn hàng:</strong>
+                                <div class="mt-1 p-2" style="background-color: var(--color-canvas-soft); font-size: 13px; color: var(--color-ink-soft); font-style: italic;">
+                                    @order.GhiChu
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

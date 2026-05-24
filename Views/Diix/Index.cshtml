@@ -1,0 +1,89 @@
+@inject EcommerceMVC.Data.Hshop2023Context _context
+@{
+    ViewData["Title"] = "Dashboard Tổng Quan";
+    Layout = "_AdminLayout";
+    
+    // Live counts from the database context
+    var totalHangHoa = _context.HangHoas.Count();
+    var totalLoai = _context.Loais.Count();
+    var totalNhanVien = _context.NhanViens.Count();
+    var totalKhachHang = _context.KhachHangs.Count();
+    var totalHoaDon = _context.HoaDons.Count();
+}
+
+<div class="admin-dashboard-hero">
+    <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: var(--color-body); display: block; margin-bottom: 8px;">HỆ THỐNG ĐIỀU HÀNH DOANH NGHIỆP</span>
+    <h1 class="admin-dashboard-title" style="border: none; padding: 0; margin-bottom: 16px;">Chào mừng đến với DIIX Portal.</h1>
+    <p class="admin-dashboard-subtitle" style="margin-bottom: 0;">Giao diện quản trị phong cách tạp chí tối giản, trực quan và hiện đại. Quản lý hoạt động kinh doanh, dữ liệu hàng hóa, danh sách nhân sự và khách hàng tập trung tại một nơi.</p>
+</div>
+
+<h3 style="text-transform: uppercase; font-family: var(--font-sans); font-size: 13px; font-weight: 800; letter-spacing: 0.1em; margin-bottom: 24px; padding-bottom: 8px; border-bottom: 2px solid var(--color-primary);">Số liệu vận hành thời gian thực</h3>
+
+<div class="admin-stats-grid">
+    <div class="admin-stats-card">
+        <div class="admin-stats-label">Hàng Hóa</div>
+        <div class="admin-stats-value">@totalHangHoa</div>
+        <div class="mt-2" style="font-size: 12px; color: var(--color-body);"><a href="/diix/HangHoa">Xem danh mục &rarr;</a></div>
+    </div>
+    <div class="admin-stats-card">
+        <div class="admin-stats-label">Loại Hàng</div>
+        <div class="admin-stats-value">@totalLoai</div>
+        <div class="mt-2" style="font-size: 12px; color: var(--color-body);"><a href="/diix/Loai">Xem loại &rarr;</a></div>
+    </div>
+    <div class="admin-stats-card">
+        <div class="admin-stats-label">Nhân Viên</div>
+        <div class="admin-stats-value">@totalNhanVien</div>
+        <div class="mt-2" style="font-size: 12px; color: var(--color-body);"><a href="/diix/NhanVien">Quản lý nhân sự &rarr;</a></div>
+    </div>
+    <div class="admin-stats-card">
+        <div class="admin-stats-label">Khách Hàng</div>
+        <div class="admin-stats-value">@totalKhachHang</div>
+        <div class="mt-2" style="font-size: 12px; color: var(--color-body);"><a href="/diix/KhachHang">Xem khách hàng &rarr;</a></div>
+    </div>
+    <div class="admin-stats-card" style="border-width: 2px;">
+        <div class="admin-stats-label" style="color: var(--color-accent-red);">Đơn Đặt Hàng</div>
+        <div class="admin-stats-value" style="color: var(--color-accent-red);">@totalHoaDon</div>
+        <div class="mt-2" style="font-size: 12px; color: var(--color-body);">Hệ thống checkout tự động</div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-6 mb-4">
+        <div class="admin-card h-100">
+            <h3 class="admin-card-title">Hướng dẫn vận hành</h3>
+            <p style="font-size: 14px; color: var(--color-body);">Sử dụng thanh điều hướng phía trên để chuyển đổi nhanh giữa các phân hệ quản lý của DIIX Portal:</p>
+            <ul style="padding-left: 20px; font-size: 14px; color: var(--color-ink-soft); line-height: 2;">
+                <li><strong>Hàng hóa:</strong> Kiểm soát thứ tự hiển thị, sản phẩm bán chạy, sản phẩm nổi bật và quản lý danh mục.</li>
+                <li><strong>Loại hàng:</strong> Cấu trúc lại danh mục sản phẩm chính trên website.</li>
+                <li><strong>Nhân viên:</strong> Phân quyền và theo dõi tài khoản quản trị nhân viên.</li>
+                <li><strong>Khách hàng:</strong> Kiểm soát trạng thái kích hoạt tài khoản đăng ký từ người dùng.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="admin-card h-100" style="background-color: var(--color-canvas-soft); border-color: var(--color-hairline);">
+            <h3 class="admin-card-title">Thông tin hệ thống</h3>
+            <table class="table table-borderless" style="font-size: 13px;">
+                <tbody>
+                    <tr>
+                        <td class="font-weight-bold" style="padding: 8px 0; width: 140px;">Phiên bản:</td>
+                        <td style="padding: 8px 0;">3.0.0 (Wired Design)</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" style="padding: 8px 0;">Nền tảng:</td>
+                        <td style="padding: 8px 0;">ASP.NET Core 8.0 MVC</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" style="padding: 8px 0;">Cơ sở dữ liệu:</td>
+                        <td style="padding: 8px 0;">Microsoft SQL Server</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" style="padding: 8px 0;">Kiến trúc:</td>
+                        <td style="padding: 8px 0;">3-Layer (Presentation, Service, Data Access)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

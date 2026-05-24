@@ -1,0 +1,148 @@
+@model IEnumerable<EcommerceMVC.ViewModels.CartItem>
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="main">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+            <li class="active">Thanh toán</li>
+        </ul>
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+            <!-- BEGIN CONTENT -->
+            <div class="col-md-12 col-sm-12">
+                <h1>Thanh toán</h1>
+                <!-- BEGIN CHECKOUT PAGE -->
+                <div class="panel-group checkout-page accordion scrollable" id="checkout-page">
+
+                    <!-- BEGIN CHECKOUT -->
+                    <div id="checkout" class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#checkout-page" href="#checkout-content" class="accordion-toggle">
+                                    Bước 1: Thông tin giao hàng
+                                </a>
+                            </h2>
+                        </div>
+                        <div id="checkout-content" class="panel-collapse collapse in">
+                            <div class="panel-body row">
+                                <form asp-action="Checkout">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div asp-validation-summary="All" class="text-danger"></div>
+                                        
+                                        @if (ViewBag.KhachHang != null && !string.IsNullOrEmpty(ViewBag.KhachHang.DiaChi))
+                                        {
+                                            <div class="form-group mb-3">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="GiongKhachHang" name="GiongKhachHang" value="true" checked>
+                                                    <label class="form-check-label" for="GiongKhachHang">
+                                                        <strong>Sử dụng thông tin tài khoản:</strong> @ViewBag.KhachHang.HoTen - @ViewBag.KhachHang.DiaChi - @ViewBag.KhachHang.DienThoai
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <div class="form-group">
+                                            <label for="HoTen">Họ tên người nhận <span class="text-danger">*</span></label>
+                                            <input type="text" name="HoTen" class="form-control input-address" id="HoTen" placeholder="Nhập họ tên người nhận" value="@ViewBag.KhachHang?.HoTen" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="DiaChi">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                                            <input type="text" name="DiaChi" class="form-control input-address" id="DiaChi" placeholder="Số nhà, tên đường, phường/xã..." value="@ViewBag.KhachHang?.DiaChi" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="DienThoai">Điện thoại người nhận <span class="text-danger">*</span></label>
+                                            <input type="text" name="DienThoai" class="form-control input-address" id="DienThoai" placeholder="Số điện thoại liên hệ" value="@ViewBag.KhachHang?.DienThoai" required>
+                                        </div>
+                                        
+                                        <div class="form-group mt-3">
+                                            <label for="GhiChu">Ghi chú thêm</label>
+                                            <textarea name="GhiChu" class="form-control" rows="3" id="GhiChu" placeholder="Ví dụ: Giao giờ hành chính..."></textarea>
+                                        </div>
+                                        <div class="form-group mt-3">
+                                            <label><strong>Phương thức thanh toán</strong></label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="CachThanhToan" id="paymentCOD" value="COD" checked>
+                                                <label class="form-check-label" for="paymentCOD">Thanh toán khi nhận hàng (COD)</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="CachThanhToan" id="paymentVNPay" value="VNPAY">
+                                                <label class="form-check-label" for="paymentVNPay">Thanh toán qua VNPAY</label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-3">Xác nhận đặt hàng</button>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="checkout-total-block">
+                                            <ul>
+                                                <li>
+                                                    <em>Tạm tính</em>
+                                                    <strong class="price"><span>$</span>@Model.Sum(p => p.ThanhTien)</strong>
+                                                </li>
+                                                <li>
+                                                    <em>Phí vận chuyển</em>
+                                                    <strong class="price"><span>$</span>0.00</strong>
+                                                </li>
+                                                <li class="checkout-total-price">
+                                                    <em>Tổng cộng</em>
+                                                    <strong class="price"><span>$</span>@Model.Sum(p => p.ThanhTien)</strong>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="table-wrapper-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sản phẩm</th>
+                                                        <th>Giá</th>
+                                                        <th>SL</th>
+                                                        <th>Tổng</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.TenHh</td>
+                                                            <td>$@item.DonGia</td>
+                                                            <td>@item.SoLuong</td>
+                                                            <td>$@item.ThanhTien</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END CHECKOUT -->
+                </div>
+                <!-- END CHECKOUT PAGE -->
+            </div>
+            <!-- END CONTENT -->
+        </div>
+        <!-- END SIDEBAR & CONTENT -->
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function toggleAddressFields() {
+                if ($("#GiongKhachHang").is(":checked")) {
+                    $(".input-address").attr("readonly", true);
+                } else {
+                    $(".input-address").attr("readonly", false);
+                }
+            }
+
+            $("#GiongKhachHang").change(toggleAddressFields);
+            toggleAddressFields();
+        });
+    </script>
+}

@@ -1,0 +1,24 @@
+## Exclude markdown documentation files
+*.md
+
+## Visual Studio and Build files
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+## Dependencies
+packages/
+node_modules/
+
+## Runtime files
+*.log
+*.db
+*.sqlite
+
+## Environment
+.env
+appsettings.Development.json

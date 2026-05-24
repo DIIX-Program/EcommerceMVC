@@ -1,0 +1,34 @@
+
+<!-- BEGIN HEADER -->
+<div class="header">
+    <div class="container">
+        <a class="site-logo" asp-controller="HangHoa" asp-action="Index"><img src="~/theme/assets/corporate/img/logos/logo-shop-red.png" alt="Metronic Shop UI" style="max-height: 40px;"></a>
+
+        <a href="javascript:void(0);" class="mobi-toggler"><i class="fa fa-bars"></i></a>
+
+        <!-- BEGIN CART -->
+        @await Component.InvokeAsync("Cart")
+        <!--END CART -->
+        <!-- BEGIN NAVIGATION -->
+        <div class="header-navigation" style="margin-top: 5px;">
+            <ul style="font-size: 13px; font-weight: 600;">
+                <li><a asp-controller="HangHoa" asp-action="Index">Trang chủ</a></li>
+
+                <li><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li>
+                <li><a asp-controller="Cart" asp-action="Checkout">Thanh toán</a></li>
+                <li><a asp-controller="YeuThich" asp-action="Index">Yêu thích</a></li>
+
+
+                <!-- BEGIN TOP SEARCH -->
+                <li class="menu-search">
+                    <span class="sep"></span>
+                    <i class="fa fa-search search-btn"></i>
+                    <partial name="_TimKiemPanel" />
+                </li>
+                <!-- END TOP SEARCH -->
+            </ul>
+        </div>
+        <!-- END NAVIGATION -->
+    </div>
+</div>
+<!-- Header END -->

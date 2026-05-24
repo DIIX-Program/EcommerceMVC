@@ -1,0 +1,62 @@
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DIIX Admin Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+    <!-- Top Masthead -->
+    <header class="admin-masthead">
+        <h1 class="admin-masthead-title">DIIX Admin Dashboard</h1>
+    </header>
+
+    <!-- Navigation Area -->
+    <nav class="admin-navbar admin-container py-0 my-0">
+        <ul class="admin-nav-links">
+            <li class="admin-nav-item">
+                <a class="admin-nav-link @(currentAction == "Index" || string.IsNullOrEmpty(currentAction) ? "active" : "")" href="/diix">Tổng Quan</a>
+            </li>
+            <li class="admin-nav-item">
+                <a class="admin-nav-link @(currentAction == "HangHoa" ? "active" : "")" href="/diix/HangHoa">Hàng Hóa</a>
+            </li>
+            <li class="admin-nav-item">
+                <a class="admin-nav-link @(currentAction == "HoaDon" || currentAction == "ChiTietHoaDon" ? "active" : "")" href="/diix/HoaDon">Đơn Hàng</a>
+            </li>
+            <li class="admin-nav-item">
+                <a class="admin-nav-link @(currentAction == "Loai" ? "active" : "")" href="/diix/Loai">Loại Hàng</a>
+            </li>
+            <li class="admin-nav-item">
+                <a class="admin-nav-link @(currentAction == "NhanVien" ? "active" : "")" href="/diix/NhanVien">Nhân Viên</a>
+            </li>
+            <li class="admin-nav-item">
+                <a class="admin-nav-link @(currentAction == "KhachHang" ? "active" : "")" href="/diix/KhachHang">Khách Hàng</a>
+            </li>
+        </ul>
+        <div class="admin-user-info py-3 py-lg-0">
+            Xin chào, <strong>@Context.User.Identity.Name</strong> | 
+            <a href="/KhachHang/DangXuat" class="admin-logout-btn">Đăng xuất</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-container">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--color-primary); color: var(--color-on-primary); text-align: center; padding: 32px 24px; margin-top: 80px; font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;">
+        © @DateTime.Now.Year DIIX Admin System — Wired Magazine Editorial Concept
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

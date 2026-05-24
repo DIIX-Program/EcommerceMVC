@@ -1,0 +1,23 @@
+@model IEnumerable<EcommerceMVC.ViewModels.MenuLoaiViewModel>
+
+<div class="sidebar-categories">
+    <h4 class="margin-bottom-15">Danh mục sản phẩm</h4>
+    <ul class="list-group sidebar-menu">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <li class="list-group-item clearfix">
+                    <a asp-controller="HangHoa" asp-action="Index" asp-route-loai="@item.MaLoai">
+                        @item.TenLoai
+                        <span class="badge pull-right">@item.SoLuong</span>
+                    </a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="list-group-item">Không có loại</li>
+        }
+    </ul>
+</div>

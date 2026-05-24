@@ -1,0 +1,132 @@
+@model EcommerceMVC.Models.HangHoa
+@{
+    ViewData["Title"] = "Cập Nhật Hàng Hóa";
+    Layout = "_AdminLayout";
+}
+
+<div class="mb-4">
+    <a href="/diix/HangHoa" style="font-family: var(--font-sans); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-body); text-decoration: none;">&larr; Quay lại danh sách</a>
+    <h1 style="border: none; padding: 0; margin-top: 12px; margin-bottom: 24px;">Cập nhật thông tin sản phẩm</h1>
+</div>
+
+<div class="admin-card" style="max-width: 900px;">
+    <h3 class="admin-card-title">Thông tin hàng hóa #@Model.MaHh</h3>
+    
+    <form asp-action="EditHangHoa" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="MaHh" />
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="TenHh">Tên Hàng Hóa <span class="text-danger">*</span></label>
+                    <input type="text" id="TenHh" name="TenHh" value="@Model.TenHh" class="admin-input" required />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="TenAlias">Tên viết tắt (Alias)</label>
+                    <input type="text" id="TenAlias" name="TenAlias" value="@Model.TenAlias" class="admin-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MaLoai">Phân loại hàng <span class="text-danger">*</span></label>
+                    <select id="MaLoai" name="MaLoai" class="admin-select" required>
+                        <option value="">-- Chọn danh mục loại hàng --</option>
+                        @foreach (var item in (List<EcommerceMVC.Models.Loai>)ViewBag.Loais)
+                        {
+                            <option value="@item.MaLoai" selected="@(item.MaLoai == Model.MaLoai ? "selected" : null)">@item.TenLoai</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MaNcc">Nhà cung cấp <span class="text-danger">*</span></label>
+                    <select id="MaNcc" name="MaNcc" class="admin-select" required>
+                        <option value="">-- Chọn nhà cung cấp --</option>
+                        @foreach (var item in (List<EcommerceMVC.Models.NhaCungCap>)ViewBag.NhaCungCaps)
+                        {
+                            <option value="@item.MaNcc" selected="@(item.MaNcc == Model.MaNcc ? "selected" : null)">@item.TenCongTy</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="DonGia">Đơn giá ($)</label>
+                    <input type="number" id="DonGia" name="DonGia" value="@Model.DonGia" step="0.01" class="admin-input" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MoTaDonVi">Đơn vị tính</label>
+                    <input type="text" id="MoTaDonVi" name="MoTaDonVi" value="@Model.MoTaDonVi" class="admin-input" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="NgaySx">Ngày sản xuất <span class="text-danger">*</span></label>
+                    <input type="date" id="NgaySx" name="NgaySx" class="admin-input" value="@Model.NgaySx.ToString("yyyy-MM-dd")" required />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="GiamGia">Giảm giá (%)</label>
+                    <input type="number" id="GiamGia" name="GiamGia" value="@Model.GiamGia" step="0.1" class="admin-input" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="SortOrder">Thứ tự sắp xếp</label>
+                    <input type="number" id="SortOrder" name="SortOrder" value="@Model.SortOrder" class="admin-input" required />
+                </div>
+            </div>
+            <div class="col-md-4" style="display: flex; align-items: center; padding-top: 16px;">
+                <div class="admin-form-group mb-0">
+                    <label class="admin-label" style="display: inline-flex; align-items: center; cursor: pointer; text-transform: none;">
+                        <input type="checkbox" id="IsBestseller" name="IsBestseller" value="true" class="admin-input" checked="@(Model.IsBestseller ? "checked" : null)" />
+                        <span style="font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; font-size: 12px; margin-left: 8px;">Sản phẩm Bestseller</span>
+                    </label>
+                    <input type="hidden" name="IsBestseller" value="false" />
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-label">Ảnh hiện tại</label>
+            @if (!string.IsNullOrEmpty(Model.Hinh))
+            {
+                var hinhPath = Model.Hinh;
+                if (!hinhPath.Contains("/"))
+                {
+                    hinhPath = "/Hinh/Hinh/HangHoa/" + hinhPath;
+                }
+                <div class="mb-3">
+                    <img src="@Url.Content("~" + hinhPath)" alt="@Model.TenHh" style="max-height: 150px; border: 1px solid var(--color-primary); padding: 4px;" onerror="this.src='/Hinh/Hinh/HangHoa/To.gif'" />
+                </div>
+            }
+            <label class="admin-label" for="HinhUpload">Thay đổi ảnh sản phẩm</label>
+            <input type="file" id="HinhUpload" name="HinhUpload" class="admin-input" accept="image/*" />
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-label" for="MoTa">Mô tả sản phẩm</label>
+            <textarea id="MoTa" name="MoTa" class="admin-textarea" rows="6">@Model.MoTa</textarea>
+        </div>
+
+        <div style="border-top: 2px solid var(--color-primary); padding-top: 24px; margin-top: 32px;" class="d-flex justify-content-end">
+            <a href="/diix/HangHoa" class="admin-btn admin-btn-outline mr-3" style="width: 150px;">Hủy bỏ</a>
+            <button type="submit" class="admin-btn admin-btn-primary" style="width: 200px;">Cập Nhật Sản Phẩm</button>
+        </div>
+    </form>
+</div>

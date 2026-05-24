@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <!-- BEGIN STYLE CSS -->
+    <partial name="_StyleCSS" />
+    <!-- END STYLE CSS -->
+
+</head>
+<body class="ecommerce">
+
+    <!-- BEGIN STYLE CUSTOMIZER -->
+    <partial name="_ThemeColor" />      
+    <!-- END BEGIN STYLE CUSTOMIZER -->
+
+    <!-- BEGIN TOP BAR -->
+    <partial name="_TopBar" />
+    <!-- END TOP BAR -->
+    
+    <!-- BEGIN HEADER -->
+    <partial name="_Header" />
+    <!-- Header END -->
+
+    @RenderSection("Slider", required: false)
+
+    @RenderSection("BreadCum", required: false)
+
+    <div class="main">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- BEGIN BRANDS -->
+    <partial name="_Brands" />
+    <!-- END BRANDS -->
+
+    <!-- BEGIN STEPS -->
+    <partial name="_Steps" />
+    <!-- END STEPS -->
+
+    <!-- BEGIN FOOTER -->
+    <partial name="_Footer" />
+    <!-- END FOOTER -->
+
+    <!-- BEGIN fast view of a product -->
+    <partial name="_PopupProduct" />
+    <!-- END fast view of a product -->
+
+    @await Component.InvokeAsync("PopupSale")
+
+    <!-- Load javascripts at bottom, this will reduce page load time -->
+    <partial name="_Script" />
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

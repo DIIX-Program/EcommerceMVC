@@ -1,0 +1,151 @@
+@model IEnumerable<EcommerceMVC.Models.HangHoa>
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "_LayoutKhachHang";
+}
+
+@section Slider {
+    <!-- BEGIN SLIDER -->
+    <partial name="_Slider" />
+    <!-- END SLIDER -->
+}
+
+<!-- BEGIN SALE PRODUCT & NEW ARRIVALS -->
+<div class="row margin-bottom-40">
+    <!-- BEGIN SALE PRODUCT -->
+    <div class="col-md-12 sale-product">
+        <h2>Sản phẩm nổi bật (Bestsellers)</h2>
+        <div class="owl-carousel owl-carousel5">
+            @foreach(var item in Model)
+            {
+                var hinhPath = item.Hinh;
+                if (!string.IsNullOrEmpty(hinhPath) && !hinhPath.Contains("/"))
+                {
+                    hinhPath = "/Hinh/Hinh/HangHoa/" + hinhPath;
+                }
+                <div>
+                    <div class="product-item">
+                        <div class="pi-img-wrapper">
+                            <img src="@hinhPath" class="img-responsive" alt="@item.TenHh" style="width: 100%; height: 250px; object-fit: cover;" onerror="this.src='/Hinh/Hinh/HangHoa/To.gif'">
+                            <div>
+                                <a href="@hinhPath" class="btn btn-default fancybox-button">Phóng to</a>
+                                <a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh" class="btn btn-default fancybox-fast-view">Chi tiết</a>
+                            </div>
+                        </div>
+                        <h3><a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">@item.TenHh</a></h3>
+                        <div class="pi-price">$@item.DonGia</div>
+                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.MaHh" class="btn btn-default add2cart">Thêm vào giỏ</a>
+                        @if (item.GiamGia > 0)
+                        {
+                            <div class="sticker sticker-sale"></div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <!-- END SALE PRODUCT -->
+</div>
+<!-- END SALE PRODUCT & NEW ARRIVALS -->
+
+<!-- BEGIN SIDEBAR & CONTENT -->
+<div class="row margin-bottom-40 ">
+    <!-- BEGIN SIDEBAR -->
+    <div class="sidebar col-md-3 col-sm-4">
+        @await Component.InvokeAsync("MenuLoai")
+    </div>
+    <!-- END SIDEBAR -->
+    <!-- BEGIN CONTENT -->
+    <div class="col-md-9 col-sm-8">
+    <h2>Sản phẩm nổi bật</h2>
+    <div class="owl-carousel owl-carousel3">
+        @foreach (var item in Model.Take(6))
+        {
+            var hinhPath = item.Hinh;
+            if (!string.IsNullOrEmpty(hinhPath) && !hinhPath.Contains("/"))
+            {
+                hinhPath = "/Hinh/Hinh/HangHoa/" + hinhPath;
+            }
+            <div>
+            <div class="product-item">
+                <div class="pi-img-wrapper">
+                <img src="@hinhPath" class="img-responsive" alt="@item.TenHh" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.src='/Hinh/Hinh/HangHoa/To.gif'">
+                <div>
+                    <a href="@hinhPath" class="btn btn-default fancybox-button">Zoom</a>
+                    <a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh" class="btn btn-default fancybox-fast-view">View</a>
+                </div>
+                </div>
+                <h3><a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">@item.TenHh</a></h3>
+                <div class="pi-price">$@item.DonGia</div>
+                <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.MaHh" class="btn btn-default add2cart">Add to cart</a>
+                @if (item.GiamGia > 0)
+                {
+                    <div class="sticker sticker-sale"></div>
+                }
+            </div>
+            </div>
+        }
+    </div>
+    </div>
+    <!-- END CONTENT -->
+</div>
+<!-- END SIDEBAR & CONTENT -->
+
+<!-- BEGIN TWO PRODUCTS & PROMO -->
+<div class="row margin-bottom-35 ">
+    <!-- BEGIN TWO PRODUCTS -->
+    <div class="col-md-6 two-items-bottom-items">
+    <h2>Sản phẩm gợi ý</h2>
+    <div class="owl-carousel owl-carousel2">
+        @foreach (var item in Model.Skip(2).Take(6))
+        {
+            var hinhPath = item.Hinh;
+            if (!string.IsNullOrEmpty(hinhPath) && !hinhPath.Contains("/"))
+            {
+                hinhPath = "/Hinh/Hinh/HangHoa/" + hinhPath;
+            }
+            <div>
+            <div class="product-item">
+                <div class="pi-img-wrapper">
+                <img src="@hinhPath" class="img-responsive" alt="@item.TenHh" style="width: 100%; height: 200px; object-fit: cover;" onerror="this.src='/Hinh/Hinh/HangHoa/To.gif'">
+                <div>
+                    <a href="@hinhPath" class="btn btn-default fancybox-button">Zoom</a>
+                    <a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh" class="btn btn-default fancybox-fast-view">View</a>
+                </div>
+                </div>
+                <h3><a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">@item.TenHh</a></h3>
+                <div class="pi-price">$@item.DonGia</div>
+                <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.MaHh" class="btn btn-default add2cart">Add to cart</a>
+            </div>
+            </div>
+        }
+    </div>
+    </div>
+    <!-- END TWO PRODUCTS -->
+    <!-- BEGIN PROMO -->
+    <div class="col-md-6 shop-index-carousel">
+    <div class="content-slider">
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#myCarousel" data-slide-to="1"></li>
+            <li data-target="#myCarousel" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="item active">
+            <img src="~/theme/assets/pages/img/index-sliders/slide1.jpg" class="img-responsive" alt="Promo 1">
+            </div>
+            <div class="item">
+            <img src="~/theme/assets/pages/img/index-sliders/slide2.jpg" class="img-responsive" alt="Promo 2">
+            </div>
+            <div class="item">
+            <img src="~/theme/assets/pages/img/index-sliders/slide3.jpg" class="img-responsive" alt="Promo 3">
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- END PROMO -->
+</div>        
+<!-- END TWO PRODUCTS & PROMO -->

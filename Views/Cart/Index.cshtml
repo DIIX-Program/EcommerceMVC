@@ -1,0 +1,122 @@
+@model IEnumerable<EcommerceMVC.ViewModels.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "_LayoutKhachHang";
+}
+
+<div class="main">
+    <div class="container">
+        <!-- BEGIN SIDEBAR & CONTENT -->
+        <div class="row margin-bottom-40">
+            <!-- BEGIN CONTENT -->
+            <div class="col-md-12 col-sm-12">
+                <h1>Shopping Cart</h1>
+                @if (TempData["Message"] != null)
+                {
+                    <div class="alert alert-warning">
+                        @TempData["Message"]
+                    </div>
+                }
+                <div class="goods-data clearfix">
+                    <div class="table-wrapper-responsive">
+                        <table summary="Shopping cart">
+                            <tr>
+                                <th class="goods-page-image">Image</th>
+                                <th class="goods-page-description">Description</th>
+                                <th class="goods-page-quantity">Quantity</th>
+                                <th class="goods-page-price">Unit price</th>
+                                <th class="goods-page-total" colspan="2">Total</th>
+                            </tr>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="goods-page-image">
+                                        <a href="javascript:;"><img src="@Url.Content("~/Hinh/Hinh/HangHoa/" + item.Hinh)" alt="@item.TenHh"></a>
+                                    </td>
+                                    <td class="goods-page-description">
+                                        <h3><a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">@item.TenHh</a></h3>
+                                    </td>
+                                    <td class="goods-page-quantity">
+                                        <div class="product-quantity">
+                                            <input type="number" value="@item.SoLuong" min="0" class="form-control input-sm quantity-input" data-id="@item.MaHh">
+                                        </div>
+                                    </td>
+                                    <td class="goods-page-price">
+                                        <strong><span>$</span>@item.DonGia</strong>
+                                    </td>
+                                    <td class="goods-page-total">
+                                        <strong class="item-total" data-id="@item.MaHh"><span>$</span>@item.ThanhTien</strong>
+                                    </td>
+                                    <td class="del-goods-col">
+                                        <a class="del-goods" asp-action="RemoveCart" asp-route-id="@item.MaHh">&nbsp;</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+
+                    <div class="shopping-total">
+                        <ul>
+                            <li>
+                                <em>Sub total</em>
+                                <strong class="price" id="cart-subtotal"><span>$</span>@Model.Sum(p => p.ThanhTien)</strong>
+                            </li>
+                            <li>
+                                <em>Shipping cost</em>
+                                <strong class="price"><span>$</span>0.00</strong>
+                            </li>
+                            <li class="shopping-total-price">
+                                <em>Total</em>
+                                <strong class="price" id="cart-total"><span>$</span>@Model.Sum(p => p.ThanhTien)</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <a class="btn btn-default" asp-controller="HangHoa" asp-action="Index">Tiếp tục mua sắm <i class="fa fa-shopping-cart"></i></a>
+                <a class="btn btn-primary" asp-controller="Cart" asp-action="Checkout">Thanh toán <i class="fa fa-check"></i></a>
+            </div>
+            <!-- END CONTENT -->
+        </div>
+        <!-- END SIDEBAR & CONTENT -->
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".quantity-input").on("change", function () {
+                var $input = $(this);
+                var id = $input.data("id");
+                var quantity = $input.val();
+                
+                $.ajax({
+                    url: '/Cart/UpdateQuantityAjax',
+                    type: 'POST',
+                    data: { id: id, quantity: quantity },
+                    success: function (response) {
+                        if (response.success) {
+                            if (quantity <= 0) {
+                                // Remove row if quantity is 0
+                                $input.closest("tr").fadeOut(300, function() { $(this).remove(); });
+                            } else {
+                                // Update item total
+                                $(".item-total[data-id='" + id + "']").html("<span>$</span>" + response.itemTotal);
+                            }
+                            // Update grand total
+                            $("#cart-subtotal").html("<span>$</span>" + response.total);
+                            $("#cart-total").html("<span>$</span>" + response.total);
+                            // Also update cart header badge if possible
+                            var cartBadge = $(".top-cart-info-count");
+                            if (cartBadge.length) {
+                                cartBadge.text(response.count + " items");
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi cập nhật giỏ hàng.");
+                    }
+                });
+            });
+        });
+    </script>
+}

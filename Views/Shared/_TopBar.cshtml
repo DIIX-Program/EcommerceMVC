@@ -1,0 +1,53 @@
+<!-- BEGIN TOP BAR -->
+<div class="pre-header">
+    <div class="container">
+        <div class="row">
+            <!-- BEGIN TOP BAR LEFT PART -->
+            <div class="col-md-6 col-sm-6 additional-shop-info">
+                <ul class="list-unstyled list-inline">
+                    <li><i class="fa fa-phone"></i><span>0909123456</span></li>
+                    @* <!-- BEGIN CURRENCIES -->
+                    <li class="shop-currencies">
+                        <a href="javascript:void(0);">€</a>
+                        <a href="javascript:void(0);">£</a>
+                        <a href="javascript:void(0);" class="current">$</a>
+                    </li> *@
+                    <!-- END CURRENCIES -->
+                    <!-- BEGIN LANGS -->
+                    <li class="langs-block">
+                        <a href="javascript:void(0);" class="current">Tiếng Việt </a>
+                       @*  <div class="langs-block-others-wrapper">
+                            <div class="langs-block-others">
+                                <a href="javascript:void(0);">English</a>
+                                <a href="javascript:void(0);">French</a>
+                                <a href="javascript:void(0);">Germany</a>
+                            </div>
+                        </div> *@
+                    </li>
+                    <!-- END LANGS -->
+                </ul>
+            </div>
+            <!-- END TOP BAR LEFT PART -->
+            <!-- BEGIN TOP BAR MENU -->
+            <div class="col-md-6 col-sm-6 additional-nav">
+                <ul class="list-unstyled list-inline pull-right">
+                    <li><a asp-controller="KhachHang" asp-action="Index">Tài khoản</a></li>
+                    <li><a asp-controller="YeuThich" asp-action="Index">Yêu thích</a></li>
+                    <li><a asp-controller="Cart" asp-action="Checkout">Thanh toán</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a href="#">Chào @User.Identity.Name</a></li>
+                        <li><a asp-controller="KhachHang" asp-action="DangXuat">Đăng xuất</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-controller="KhachHang" asp-action="DangNhap">Đăng nhập</a></li>
+                        <li><a asp-controller="KhachHang" asp-action="DangKy">Đăng ký</a></li>
+                    }
+                </ul>
+            </div>
+            <!-- END TOP BAR MENU -->
+        </div>
+    </div>
+</div>
+<!-- END TOP BAR -->

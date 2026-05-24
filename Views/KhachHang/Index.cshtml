@@ -1,0 +1,61 @@
+@model EcommerceMVC.ViewModels.CapNhatThongTinVM
+
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Hồ sơ cá nhân</h1>
+    
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="CapNhatThongTin" enctype="multipart/form-data">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        
+                        <div class="form-group">
+                            <label asp-for="HoTen">Họ tên <span class="text-danger">*</span></label>
+                            <input asp-for="HoTen" class="form-control" />
+                            <span asp-validation-for="HoTen" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="DiaChi">Địa chỉ</label>
+                            <input asp-for="DiaChi" class="form-control" />
+                            <span asp-validation-for="DiaChi" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="DienThoai">Điện thoại</label>
+                            <input asp-for="DienThoai" class="form-control" />
+                            <span asp-validation-for="DienThoai" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Hinh">Hình đại diện</label>
+                            <input asp-for="Hinh" type="file" class="form-control" />
+                            <span asp-validation-for="Hinh" class="text-danger"></span>
+                            @if (!string.IsNullOrEmpty(Model.HinhMacDinh))
+                            {
+                                <div class="mt-2">
+                                    <img src="~/Hinh/KhachHang/@Model.HinhMacDinh" alt="Avatar" width="100" class="img-thumbnail" onerror="this.onerror=null;this.src='https://via.placeholder.com/100?text=No+Avatar';" />
+                                </div>
+                            }
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Cập nhật thông tin</button>
+                        <a href="/" class="btn btn-default mt-3 ml-2">Quay lại mua sắm</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

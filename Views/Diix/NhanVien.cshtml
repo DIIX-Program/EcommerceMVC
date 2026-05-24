@@ -1,0 +1,179 @@
+@model IEnumerable<EcommerceMVC.Models.NhanVien>
+@{
+    ViewData["Title"] = "Quản lý Nhân Viên";
+    Layout = "_AdminLayout";
+}
+
+<div class="mb-4 d-flex justify-content-between align-items-baseline">
+    <h2 style="border: none; padding: 0; margin: 0;">Quản lý Đội Ngũ Nhân Viên</h2>
+    <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-body); text-transform: uppercase;">
+        Hiển thị @Model.Count() / @ViewBag.TotalItems nhân sự
+    </span>
+</div>
+
+<div class="row-split">
+    <!-- Sidebar: Add new employee form -->
+    <div class="col-sidebar">
+        <div class="admin-card">
+            @if (ViewBag.EditItem != null)
+            {
+                var editItem = (EcommerceMVC.Models.NhanVien)ViewBag.EditItem;
+                <h3 class="admin-card-title">Cập Nhật Nhân Viên</h3>
+                <form asp-action="EditNhanVien" method="post">
+                    <input type="hidden" name="MaNv" value="@editItem.MaNv" />
+                    <div class="admin-form-group">
+                        <label class="admin-label">Mã nhân viên (Username)</label>
+                        <input type="text" class="admin-input" value="@editItem.MaNv" disabled style="background-color: var(--color-canvas-soft); color: var(--color-body);" />
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="HoTen">Họ và tên <span class="text-danger">*</span></label>
+                        <input type="text" id="HoTen" name="HoTen" value="@editItem.HoTen" class="admin-input" required />
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="Email">Địa chỉ Email <span class="text-danger">*</span></label>
+                        <input type="email" id="Email" name="Email" value="@editItem.Email" class="admin-input" required />
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="MatKhau">Mật khẩu mới (để trống nếu không đổi)</label>
+                        <input type="password" id="MatKhau" name="MatKhau" class="admin-input" placeholder="Nhập mật khẩu mới..." />
+                    </div>
+                    <button type="submit" class="admin-btn admin-btn-primary w-100 mb-2">Cập Nhật</button>
+                    <a href="/diix/NhanVien" class="admin-btn admin-btn-outline w-100 text-center d-block">Hủy Bỏ</a>
+                </form>
+            }
+            else
+            {
+                <h3 class="admin-card-title">Thêm Nhân Viên</h3>
+                <form asp-action="CreateNhanVien" method="post">
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="MaNv">Mã nhân viên (Username) <span class="text-danger">*</span></label>
+                        <input type="text" id="MaNv" name="MaNv" class="admin-input" placeholder="Ví dụ: nv01" required />
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="HoTen">Họ và tên <span class="text-danger">*</span></label>
+                        <input type="text" id="HoTen" name="HoTen" class="admin-input" placeholder="Ví dụ: Nguyễn Văn A" required />
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="Email">Địa chỉ Email <span class="text-danger">*</span></label>
+                        <input type="email" id="Email" name="Email" class="admin-input" placeholder="Ví dụ: a.nguyen@diix.com" required />
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-label" for="MatKhau">Mật khẩu khởi tạo</label>
+                        <input type="password" id="MatKhau" name="MatKhau" class="admin-input" placeholder="Nhập mật khẩu..." />
+                    </div>
+                    <button type="submit" class="admin-btn admin-btn-primary w-100">Xác Nhận Đăng Ký</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <!-- Main Content: Employee list table -->
+    <div class="col-main">
+        <!-- Search bar -->
+        <div class="admin-card mb-4" style="padding: 16px; border-width: 1px;">
+            <form method="get" action="/diix/NhanVien" class="row align-items-center">
+                <div class="col-md-8 mb-2 mb-md-0">
+                    <input type="text" name="searchKey" value="@ViewBag.SearchKey" class="admin-input" placeholder="Tìm theo tên, mã NV, email..." style="height: 38px; padding: 6px 12px;" />
+                </div>
+                <div class="col-md-4 d-flex">
+                    <button type="submit" class="admin-btn admin-btn-primary w-100 mr-2" style="height: 38px; padding: 0;">TÌM KIẾM</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchKey))
+                    {
+                        <a href="/diix/NhanVien" class="admin-btn admin-btn-outline" style="height: 38px; line-height: 36px; padding: 0 12px;">RESET</a>
+                    }
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-table-wrapper">
+            <table class="admin-table" style="margin-top: 0;">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Mã nhân viên</th>
+                        <th>Họ và tên</th>
+                        <th>Địa chỉ Email</th>
+                        <th style="text-align: center; width: 120px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td class="font-weight-bold" style="color: var(--color-primary); font-family: monospace; font-size: 14px;">@item.MaNv</td>
+                            <td style="font-weight: 600; color: var(--color-ink);">@item.HoTen</td>
+                            <td><a href="mailto:@item.Email" style="color: var(--color-primary); font-weight: 500;">@item.Email</a></td>
+                            <td style="text-align: center; white-space: nowrap;">
+                                <a href="/diix/NhanVien?editId=@item.MaNv&searchKey=@ViewBag.SearchKey&page=@ViewBag.CurrentPage" class="admin-btn admin-btn-outline admin-btn-sm mr-1">Sửa</a>
+                                <form asp-action="DeleteNhanVien" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhân viên này khỏi hệ thống?');">
+                                    <input type="hidden" name="id" value="@item.MaNv" />
+                                    <button type="submit" class="admin-btn admin-btn-danger admin-btn-sm">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 32px; color: var(--color-body); font-style: italic;">
+                                Không tìm thấy nhân viên nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        @if (ViewBag.TotalPages > 1)
+        {
+            int currentPage = ViewBag.CurrentPage;
+            int totalPages = ViewBag.TotalPages;
+            int maxPagesToShow = 5;
+            int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+            int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+            if (endPage - startPage + 1 < maxPagesToShow)
+            {
+                startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            <ul class="admin-pagination" style="flex-wrap: wrap;">
+                <li class="admin-pagination-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="admin-pagination-link" href="/diix/NhanVien?searchKey=@ViewBag.SearchKey&page=@(currentPage - 1)">&larr; Trước</a>
+                </li>
+                
+                @if (startPage > 1)
+                {
+                    <li class="admin-pagination-item">
+                        <a class="admin-pagination-link" href="/diix/NhanVien?searchKey=@ViewBag.SearchKey&page=1">1</a>
+                    </li>
+                    @if (startPage > 2)
+                    {
+                        <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+                    }
+                }
+                
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="admin-pagination-item @(currentPage == i ? "active" : "")">
+                        <a class="admin-pagination-link" href="/diix/NhanVien?searchKey=@ViewBag.SearchKey&page=@i">@i</a>
+                    </li>
+                }
+                
+                @if (endPage < totalPages)
+                {
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="admin-pagination-item disabled"><span class="admin-pagination-link" style="border: none; pointer-events: none;">...</span></li>
+                    }
+                    <li class="admin-pagination-item">
+                        <a class="admin-pagination-link" href="/diix/NhanVien?searchKey=@ViewBag.SearchKey&page=@totalPages">@totalPages</a>
+                    </li>
+                }
+                
+                <li class="admin-pagination-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="admin-pagination-link" href="/diix/NhanVien?searchKey=@ViewBag.SearchKey&page=@(currentPage + 1)">Sau &rarr;</a>
+                </li>
+            </ul>
+        }
+    </div>
+</div>

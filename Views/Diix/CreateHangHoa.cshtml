@@ -1,0 +1,119 @@
+@model EcommerceMVC.Models.HangHoa
+@{
+    ViewData["Title"] = "Thêm Hàng Hóa Mới";
+    Layout = "_AdminLayout";
+}
+
+<div class="mb-4">
+    <a href="/diix/HangHoa" style="font-family: var(--font-sans); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--color-body); text-decoration: none;">&larr; Quay lại danh sách</a>
+    <h1 style="border: none; padding: 0; margin-top: 12px; margin-bottom: 24px;">Đăng ký sản phẩm mới</h1>
+</div>
+
+<div class="admin-card" style="max-width: 900px;">
+    <h3 class="admin-card-title">Thông tin hàng hóa</h3>
+    
+    <form asp-action="CreateHangHoa" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="TenHh">Tên Hàng Hóa <span class="text-danger">*</span></label>
+                    <input type="text" id="TenHh" name="TenHh" class="admin-input" placeholder="Ví dụ: Táo Rockit New Zealand" required />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="TenAlias">Tên viết tắt (Alias)</label>
+                    <input type="text" id="TenAlias" name="TenAlias" class="admin-input" placeholder="Ví dụ: tao-rockit" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MaLoai">Phân loại hàng <span class="text-danger">*</span></label>
+                    <select id="MaLoai" name="MaLoai" class="admin-select" required>
+                        <option value="">-- Chọn danh mục loại hàng --</option>
+                        @foreach (var item in (List<EcommerceMVC.Models.Loai>)ViewBag.Loais)
+                        {
+                            <option value="@item.MaLoai">@item.TenLoai</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MaNcc">Nhà cung cấp <span class="text-danger">*</span></label>
+                    <select id="MaNcc" name="MaNcc" class="admin-select" required>
+                        <option value="">-- Chọn nhà cung cấp --</option>
+                        @foreach (var item in (List<EcommerceMVC.Models.NhaCungCap>)ViewBag.NhaCungCaps)
+                        {
+                            <option value="@item.MaNcc">@item.TenCongTy</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="DonGia">Đơn giá ($)</label>
+                    <input type="number" id="DonGia" name="DonGia" step="0.01" class="admin-input" placeholder="0.00" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="MoTaDonVi">Đơn vị tính</label>
+                    <input type="text" id="MoTaDonVi" name="MoTaDonVi" class="admin-input" placeholder="Ví dụ: Hộp, Cái, Kg" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="NgaySx">Ngày sản xuất <span class="text-danger">*</span></label>
+                    <input type="date" id="NgaySx" name="NgaySx" class="admin-input" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="GiamGia">Giảm giá (%)</label>
+                    <input type="number" id="GiamGia" name="GiamGia" step="0.1" class="admin-input" value="0.0" required />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="admin-form-group">
+                    <label class="admin-label" for="SortOrder">Thứ tự sắp xếp</label>
+                    <input type="number" id="SortOrder" name="SortOrder" class="admin-input" value="0" required />
+                </div>
+            </div>
+            <div class="col-md-4" style="display: flex; align-items: center; padding-top: 16px;">
+                <div class="admin-form-group mb-0">
+                    <label class="admin-label" style="display: inline-flex; align-items: center; cursor: pointer; text-transform: none;">
+                        <input type="checkbox" id="IsBestseller" name="IsBestseller" value="true" class="admin-input" />
+                        <span style="font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; font-size: 12px; margin-left: 8px;">Sản phẩm Bestseller</span>
+                    </label>
+                    <input type="hidden" name="IsBestseller" value="false" />
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-label" for="HinhUpload">Ảnh sản phẩm</label>
+            <input type="file" id="HinhUpload" name="HinhUpload" class="admin-input" accept="image/*" />
+            <small style="color: var(--color-body); font-size: 12px; margin-top: 6px; display: block;">Hỗ trợ định dạng hình ảnh JPG, PNG, GIF. Ảnh sẽ được tự động lưu trữ vào thư mục hệ thống.</small>
+        </div>
+
+        <div class="admin-form-group">
+            <label class="admin-label" for="MoTa">Mô tả sản phẩm</label>
+            <textarea id="MoTa" name="MoTa" class="admin-textarea" rows="6" placeholder="Viết thông tin giới thiệu chi tiết sản phẩm..."></textarea>
+        </div>
+
+        <div style="border-top: 2px solid var(--color-primary); padding-top: 24px; margin-top: 32px;" class="d-flex justify-content-end">
+            <a href="/diix/HangHoa" class="admin-btn admin-btn-outline mr-3" style="width: 150px;">Hủy bỏ</a>
+            <button type="submit" class="admin-btn admin-btn-primary" style="width: 200px;">Lưu Sản Phẩm</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,56 @@
+@inject EcommerceMVC.Data.Hshop2023Context db
+@{
+    Layout = "_LayoutKhachHang";
+    
+    // Query top 3 dynamic Bestseller products from database
+    var bestSellers = db.HangHoas
+        .Where(h => h.IsBestseller)
+        .OrderBy(h => h.SortOrder)
+        .Take(3)
+        .ToList();
+}
+
+@section Slider {
+    <!-- BEGIN SLIDER -->
+    <partial name="_Slider" />
+    <!-- END SLIDER -->
+}
+
+<div class="row margin-bottom-40">
+    <!-- BEGIN SIDEBAR -->
+    <div class="sidebar col-md-3 col-sm-4">
+        @await Component.InvokeAsync("MenuLoai")
+        
+        <div class="sidebar-products clearfix">
+            <h2>Bestsellers</h2>
+            @foreach (var item in bestSellers)
+            {
+                var hinhPath = item.Hinh;
+                if (!string.IsNullOrEmpty(hinhPath) && !hinhPath.Contains("/"))
+                {
+                    hinhPath = "/Hinh/Hinh/HangHoa/" + hinhPath;
+                }
+                <div class="item">
+                    <a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">
+                        <img src="@Url.Content("~" + hinhPath)" alt="@item.TenHh" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='/Hinh/Hinh/HangHoa/To.gif'">
+                    </a>
+                    <h3><a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">@item.TenHh</a></h3>
+                    <div class="price">$@item.DonGia?.ToString("N2")</div>
+                </div>
+            }
+            @if (!bestSellers.Any())
+            {
+                <div class="item" style="font-style: italic; color: #888; font-size: 13px; padding: 10px 0;">
+                    Chưa có sản phẩm nổi bật
+                </div>
+            }
+        </div>
+    </div>
+    <!-- END SIDEBAR -->
+
+    <!-- BEGIN CONTENT -->
+    <div class="col-md-9 col-sm-8">
+        @RenderBody()
+    </div>
+    <!-- END CONTENT -->
+</div>

@@ -1,0 +1,45 @@
+@model IEnumerable<EcommerceMVC.Models.YeuThich>
+@{
+    ViewData["Title"] = "Danh sách yêu thích";
+    Layout = "_LayoutKhachHang";
+}
+
+<div class="main">
+    <div class="container">
+        <div class="row margin-bottom-40">
+            <div class="col-md-12 col-sm-12">
+                <h1>Sản phẩm yêu thích</h1>
+                <div class="goods-data clearfix">
+                    <div class="table-wrapper-responsive">
+                        <table summary="Wishlist">
+                            <tr>
+                                <th class="goods-page-image">Ảnh</th>
+                                <th class="goods-page-description">Tên sản phẩm</th>
+                                <th class="goods-page-price">Giá</th>
+                                <th class="goods-page-total" colspan="2">Hành động</th>
+                            </tr>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="goods-page-image">
+                                        <a href="javascript:;"><img src="@Url.Content("~/Hinh/Hinh/HangHoa/" + item.MaHhNavigation.Hinh)" alt="@item.MaHhNavigation.TenHh"></a>
+                                    </td>
+                                    <td class="goods-page-description">
+                                        <h3><a asp-controller="HangHoa" asp-action="Detail" asp-route-id="@item.MaHh">@item.MaHhNavigation.TenHh</a></h3>
+                                    </td>
+                                    <td class="goods-page-price">
+                                        <strong><span>$</span>@item.MaHhNavigation.DonGia</strong>
+                                    </td>
+                                    <td class="del-goods-col">
+                                        <a class="btn btn-primary" asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.MaHh">Thêm vào giỏ</a>
+                                        <a class="del-goods" asp-action="Remove" asp-route-id="@item.MaYt">&nbsp;</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
